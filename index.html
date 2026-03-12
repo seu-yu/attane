@@ -1,0 +1,755 @@
+
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>あったね</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500&family=Zen+Maru+Gothic:wght@400;500&display=swap');
+
+  :root {
+    --sky: #e8f4fd;
+    --sky-mid: #c2dff5;
+    --sky-deep: #8bbfe8;
+    --blue: #4a90d9;
+    --blue-dark: #2d6fad;
+    --white: #ffffff;
+    --text: #2c4a6e;
+    --text-light: #6a8fbb;
+    --cloud: rgba(255,255,255,0.85);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    background: linear-gradient(170deg, #b8dff7 0%, #d4edfc 30%, #e8f6ff 60%, #f0faff 100%);
+    font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--text);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 32px 16px 48px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  .cloud {
+    position: fixed;
+    background: var(--cloud);
+    border-radius: 50px;
+    opacity: 0.7;
+    pointer-events: none;
+  }
+  .cloud::before, .cloud::after {
+    content: '';
+    position: absolute;
+    background: var(--cloud);
+    border-radius: 50%;
+  }
+  .c1 { width: 120px; height: 38px; top: 8%; left: -10%; animation: drift 28s linear infinite; }
+  .c1::before { width: 60px; height: 60px; top: -28px; left: 18px; }
+  .c1::after  { width: 40px; height: 40px; top: -18px; left: 55px; }
+  .c2 { width: 90px; height: 28px; top: 22%; left: -8%; animation: drift 38s linear infinite 6s; opacity: 0.5; }
+  .c2::before { width: 45px; height: 45px; top: -22px; left: 12px; }
+  .c2::after  { width: 30px; height: 30px; top: -14px; left: 40px; }
+  .c3 { width: 150px; height: 44px; top: 60%; left: -12%; animation: drift 48s linear infinite 14s; opacity: 0.4; }
+  .c3::before { width: 70px; height: 70px; top: -34px; left: 22px; }
+  .c3::after  { width: 50px; height: 50px; top: -24px; left: 75px; }
+  .c4 { width: 80px; height: 24px; top: 78%; left: -8%; animation: drift 33s linear infinite 20s; opacity: 0.5; }
+  .c4::before { width: 38px; height: 38px; top: -18px; left: 10px; }
+  .c4::after  { width: 26px; height: 26px; top: -12px; left: 36px; }
+
+  @keyframes drift { from { transform: translateX(0); } to { transform: translateX(120vw); } }
+
+  .birds {
+    position: fixed; top: 12%; left: -60px;
+    animation: bird-fly 22s linear infinite 4s;
+    pointer-events: none; opacity: 0.4;
+  }
+  .bird {
+    display: inline-block; width: 18px; height: 6px;
+    border-top: 2px solid var(--blue-dark); border-radius: 50% 50% 0 0;
+    margin: 0 4px; animation: flap 0.7s ease-in-out infinite alternate;
+  }
+  .bird:nth-child(2) { animation-delay: 0.15s; margin-top: 6px; }
+  .bird:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes flap { from { transform: scaleY(1); } to { transform: scaleY(-0.5); } }
+  @keyframes bird-fly { from { transform: translateX(0) translateY(0); } to { transform: translateX(120vw) translateY(-30px); } }
+
+  .sun {
+    position: fixed; top: 5%; right: 8%;
+    width: 64px; height: 64px;
+    background: radial-gradient(circle, #ffe066, #f7c948);
+    border-radius: 50%;
+    box-shadow: 0 0 0 12px rgba(247,201,72,0.15), 0 0 0 24px rgba(247,201,72,0.07);
+    pointer-events: none;
+    animation: sun-pulse 4s ease-in-out infinite;
+  }
+  @keyframes sun-pulse {
+    0%,100% { box-shadow: 0 0 0 12px rgba(247,201,72,0.15), 0 0 0 24px rgba(247,201,72,0.07); }
+    50%      { box-shadow: 0 0 0 16px rgba(247,201,72,0.18), 0 0 0 32px rgba(247,201,72,0.08); }
+  }
+
+  .header { text-align: center; margin-bottom: 24px; position: relative; z-index: 1; }
+  .title { font-size: 1.6rem; font-weight: 500; color: var(--blue-dark); letter-spacing: 0.15em; }
+  .subtitle { font-size: 0.72rem; color: var(--text-light); margin-top: 4px; letter-spacing: 0.1em; font-family: 'Noto Sans JP', sans-serif; font-weight: 300; }
+
+  .location-tabs {
+    display: flex; gap: 8px; flex-wrap: wrap; justify-content: center;
+    margin-bottom: 24px; position: relative; z-index: 1; max-width: 400px;
+  }
+  .tab {
+    background: var(--white); border: 2px solid transparent; border-radius: 30px;
+    padding: 7px 14px; font-size: 0.78rem; font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--text-light); cursor: pointer; transition: all 0.22s ease;
+    box-shadow: 0 2px 8px rgba(74,144,217,0.12); white-space: nowrap;
+  }
+  .tab:hover { border-color: var(--sky-deep); color: var(--blue); transform: translateY(-1px); }
+  .tab.active { background: var(--blue); border-color: var(--blue); color: white; box-shadow: 0 4px 14px rgba(74,144,217,0.35); transform: translateY(-1px); }
+
+  .gacha-area { position: relative; z-index: 1; display: flex; flex-direction: column; align-items: center; margin-bottom: 24px; }
+  .gacha-btn {
+    width: 160px; height: 160px; border-radius: 50%; border: none;
+    background: linear-gradient(145deg, #ffffff, #d4eaf9);
+    box-shadow: 0 8px 32px rgba(74,144,217,0.25), 0 2px 8px rgba(74,144,217,0.15), inset 0 2px 6px rgba(255,255,255,0.9);
+    cursor: pointer; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 6px; transition: all 0.2s ease; position: relative; overflow: hidden;
+  }
+  .gacha-btn::before {
+    content: ''; position: absolute; inset: 8px; border-radius: 50%;
+    border: 1.5px dashed rgba(74,144,217,0.2);
+  }
+  .gacha-btn:hover { transform: translateY(-3px) scale(1.03); box-shadow: 0 14px 40px rgba(74,144,217,0.3), 0 4px 12px rgba(74,144,217,0.2), inset 0 2px 6px rgba(255,255,255,0.9); }
+  .gacha-btn:active { transform: scale(0.96); box-shadow: 0 4px 16px rgba(74,144,217,0.2); }
+  .gacha-emoji { font-size: 2.6rem; line-height: 1; transition: transform 0.3s ease; }
+  .gacha-btn:hover .gacha-emoji { transform: scale(1.15) rotate(8deg); }
+  .gacha-label { font-size: 0.65rem; color: var(--text-light); letter-spacing: 0.2em; font-family: 'Noto Sans JP', sans-serif; }
+
+  .result-card {
+    width: 100%; max-width: 360px; background: var(--white); border-radius: 20px;
+    padding: 28px 24px; box-shadow: 0 8px 32px rgba(74,144,217,0.15), 0 2px 8px rgba(74,144,217,0.08);
+    opacity: 0; transform: translateY(12px) scale(0.98);
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    position: relative; z-index: 1; min-height: 110px;
+    display: flex; flex-direction: column; align-items: center; gap: 14px;
+  }
+  .result-card.visible { opacity: 1; transform: translateY(0) scale(1); }
+  .card-location {
+    font-size: 0.65rem; color: var(--blue); letter-spacing: 0.2em;
+    background: var(--sky); padding: 3px 12px; border-radius: 20px;
+    font-family: 'Noto Sans JP', sans-serif;
+  }
+  .card-text { font-size: 1.05rem; color: var(--text); text-align: center; line-height: 1.9; letter-spacing: 0.04em; }
+  @keyframes pop-in { 0% { opacity: 0; transform: translateY(5px); } 100% { opacity: 1; transform: translateY(0); } }
+  .card-text.animating { animation: pop-in 0.4s ease forwards; }
+
+  .reactions {
+    display: flex; gap: 12px; opacity: 0; transform: translateY(6px);
+    transition: opacity 0.4s ease 0.25s, transform 0.4s ease 0.25s;
+    position: relative; z-index: 1; margin-top: 4px;
+  }
+  .reactions.visible { opacity: 1; transform: translateY(0); }
+  .react-btn {
+    background: var(--white); border: 1.5px solid var(--sky-deep); border-radius: 30px;
+    padding: 8px 20px; font-size: 0.78rem; font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--text-light); cursor: pointer; transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(74,144,217,0.1);
+  }
+  .react-btn:hover { background: var(--sky); border-color: var(--blue); color: var(--blue); transform: translateY(-1px); }
+  .react-btn.selected { background: var(--blue); border-color: var(--blue); color: white; box-shadow: 0 4px 14px rgba(74,144,217,0.3); }
+
+  .ripple {
+    position: absolute; border-radius: 50%; background: rgba(74,144,217,0.2);
+    transform: scale(0); animation: ripple-out 0.5s ease-out forwards; pointer-events: none;
+  }
+  @keyframes ripple-out { to { transform: scale(4); opacity: 0; } }
+
+  .log-section {
+    width: 100%; max-width: 360px; margin-top: 24px;
+    position: relative; z-index: 1;
+    display: none;
+  }
+  .log-section.visible { display: block; }
+
+  .log-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 10px; padding: 0 4px;
+  }
+  .log-title {
+    font-size: 0.72rem; color: var(--blue-dark); letter-spacing: 0.15em;
+    font-family: 'Noto Sans JP', sans-serif; font-weight: 500;
+  }
+  .log-clear {
+    background: none; border: 1px solid var(--sky-deep); border-radius: 20px;
+    padding: 2px 10px; font-size: 0.65rem; color: var(--text-light);
+    font-family: 'Noto Sans JP', sans-serif; cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  .log-clear:hover { border-color: var(--blue); color: var(--blue); }
+
+  .log-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+  .log-item {
+    background: var(--white); border-radius: 14px;
+    padding: 12px 16px; display: flex; align-items: center; gap: 10px;
+    box-shadow: 0 2px 8px rgba(74,144,217,0.1);
+    animation: slide-in 0.3s ease forwards;
+  }
+  @keyframes slide-in {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .log-loc { font-size: 0.8rem; flex-shrink: 0; }
+  .log-text { font-size: 0.82rem; color: var(--text); line-height: 1.5; flex: 1; }
+
+  .share-section {
+    width: 100%; max-width: 360px; margin-top: 16px;
+    position: relative; z-index: 1;
+    display: none;
+  }
+  .share-section.visible { display: block; }
+
+  .share-header {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 8px; padding: 0 4px;
+  }
+  .share-title {
+    font-size: 0.72rem; color: var(--blue-dark); letter-spacing: 0.15em;
+    font-family: 'Noto Sans JP', sans-serif; font-weight: 500;
+  }
+  .share-textarea {
+    width: 100%; background: var(--white); border: 1.5px solid var(--sky-deep);
+    border-radius: 14px; padding: 14px 16px;
+    font-size: 0.82rem; font-family: 'Zen Maru Gothic', sans-serif;
+    color: var(--text); line-height: 1.8; resize: none;
+    box-shadow: 0 2px 8px rgba(74,144,217,0.08);
+    outline: none; min-height: 130px;
+    transition: border-color 0.2s ease;
+  }
+  .share-textarea:focus { border-color: var(--blue); }
+  .copy-btn {
+    margin-top: 8px; width: 100%;
+    background: var(--blue); border: none; border-radius: 30px;
+    padding: 10px; font-size: 0.78rem; font-family: 'Zen Maru Gothic', sans-serif;
+    color: white; cursor: pointer; transition: all 0.2s ease;
+    box-shadow: 0 4px 14px rgba(74,144,217,0.25);
+    letter-spacing: 0.1em;
+  }
+  .copy-btn:hover { background: var(--blue-dark); transform: translateY(-1px); }
+  .copy-btn.copied { background: #5bb87a; }
+  .share-footer {
+    display: flex; justify-content: flex-end; align-items: center;
+    margin-top: 4px; gap: 12px;
+  }
+  .char-count {
+    font-size: 0.68rem; color: var(--text-light);
+    font-family: 'Noto Sans JP', sans-serif;
+    transition: color 0.2s ease;
+  }
+  .char-count.over { color: #d94a4a; font-weight: 500; }
+
+</style>
+</head>
+<body>
+
+<div class="sun"></div>
+<div class="birds"><div class="bird"></div><div class="bird"></div><div class="bird"></div></div>
+<div class="cloud c1"></div>
+<div class="cloud c2"></div>
+<div class="cloud c3"></div>
+<div class="cloud c4"></div>
+
+<div class="header">
+  <div class="title">あったね</div>
+  <div class="subtitle">小さないいこと、あったかな</div>
+</div>
+
+<div class="location-tabs">
+  <button class="tab active" data-loc="home" onclick="setLoc(this)">🏠 家の中</button>
+  <button class="tab" data-loc="work" onclick="setLoc(this)">🏢 会社</button>
+  <button class="tab" data-loc="train" onclick="setLoc(this)">🚃 電車</button>
+  <button class="tab" data-loc="outside" onclick="setLoc(this)">🌳 外・散歩</button>
+  <button class="tab" data-loc="cafe" onclick="setLoc(this)">☕ カフェ</button>
+</div>
+
+<div class="gacha-area">
+  <button class="gacha-btn" id="gachaBtn" onclick="draw(event)">
+    <div class="gacha-emoji" id="gachaEmoji">🌤️</div>
+    <div class="gacha-label">ふれる</div>
+  </button>
+</div>
+
+<div class="result-card" id="resultCard">
+  <div class="card-location" id="cardLocation">🏠 家の中</div>
+  <div class="card-text" id="cardText"></div>
+</div>
+
+<div class="reactions" id="reactions">
+  <button class="react-btn" id="btnYes" onclick="react('yes')">あった ✓</button>
+  <button class="react-btn" id="btnNo" onclick="react('no')">まだかな…</button>
+</div>
+
+<!-- Log list -->
+<div class="log-section" id="logSection">
+  <div class="log-header">
+    <span class="log-title">✦ 今日あったこと</span>
+    <button class="log-clear" onclick="clearLog()">クリア</button>
+  </div>
+  <ul class="log-list" id="logList"></ul>
+</div>
+
+<div class="share-section" id="shareSection">
+  <div class="share-header">
+    <span class="share-title">✦ シェアする</span>
+  </div>
+  <textarea class="share-textarea" id="shareText" readonly></textarea>
+  <div class="share-footer"><span class="char-count" id="charCount">0 / 140</span></div>
+  <button class="copy-btn" id="copyBtn" onclick="copyShare()">コピーする</button>
+</div>
+
+<script>
+const CARDS = {
+  home: {
+    label: '🏠 家の中',
+    emoji: ['🏠','🛋️','🍵','🌿','🐱'],
+    cards: [
+      "布団がまだあたたかかった",
+      "スリッパがすぐ足に合った",
+      "電気のスイッチを一発で押せた",
+      "冷蔵庫に飲みたいものがあった",
+      "シャワーがすぐ適温になった",
+      "ティッシュが残っていた",
+      "充電ケーブルがすぐ見つかった",
+      "スマホがすぐ見つかった",
+      "枕のひんやりした面が残っていた",
+      "ゴミ袋がちょうど残っていた",
+      "柔軟剤のいい匂いがした",
+      "窓を開けたらいい風が入ってきた",
+      "お気に入りのコップが洗ってあった",
+      "湯船がちょうどいい温度だった",
+      "冷蔵庫のものが思ったより減っていなかった",
+      "横になったら少しだけ楽になった",
+      "部屋が静かだった",
+      "毛布が重くて気持ちよかった",
+      "ぼんやり窓の外を見られた",
+      "飲み物を一口飲めた",
+      "呼吸が少し楽になった瞬間があった",
+      "天井をただ見ていられた",
+      "日の光が部屋に入ってきた",
+      "いられる場所があった",
+      "手が少しあたたかかった",
+      "目を閉じたら静かだった",
+      "カーテンが少し揺れた",
+      "水を飲めた",
+      "深呼吸が少しできた",
+      "布団の中でじっとしていられた",
+      "時計の音が聞こえた",
+      "体がちゃんと動いていた",
+      "明かりをつけることができた",
+      "何もしない時間があった",
+      "足が地についていた",
+      "目を閉じる瞬間があった",
+      "今日もなんとかいられた",
+      "部屋の温度がちょうどよかった",
+      "なんとなく体が重くなかった",
+      "少しだけうとうとできた",
+      "その場でじっとしていられた",
+      "好きなものが視界に入った",
+      "スマホを置けた瞬間があった",
+      "静かに座っていられた",
+      "ちゃんと目が覚めた",
+      "一回だけ深呼吸できた",
+      "音楽をひとつ聴けた",
+      "夜になった",
+      "今日も終わりに近づいた",
+      "布団に入る時間が来た",
+    ]
+  },
+  work: {
+    label: '🏢 会社',
+    emoji: ['🏢','💼','☕','📋','🖊️'],
+    cards: [
+      "エレベーターがすぐ来た",
+      "コピー機が空いていた",
+      "メールの返信が思ったより早く来た",
+      "会議が定刻に終わった",
+      "お昼に座れる席がすぐ見つかった",
+      "トイレがすいていた",
+      "ちょうどいいタイミングで休憩できた",
+      "ペンがすぐ書けた",
+      "資料がすぐ見つかった",
+      "今日は席が快適な温度だった",
+      "昼休み、少しぼーっとできた",
+      "お湯がちょうど沸いていた",
+      "パソコンがすぐ立ち上がった",
+      "誰も来ない静かな時間があった",
+      "帰りにすんなりログアウトできた",
+      "一瞬だけ窓の外を見られた",
+      "今日も一日ここにいられた",
+      "飲み物がおいしかった",
+      "一つだけ仕事が片付いた",
+      "今日は誰かに話しかけずにすんだ",
+      "ロッカーのカギがすぐ開いた",
+      "廊下を誰にも会わずに歩けた",
+      "少しだけ席を外せた",
+      "ゴミ箱がいっぱいじゃなかった",
+      "筆記具が手元にあった",
+      "お昼を食べられた",
+      "今日、出社できた",
+      "一本だけ深呼吸できた",
+      "画面から少しだけ目を離せた",
+      "今日も帰れる時間が来た",
+      "終わりの時間が来た",
+      "机の上に少しスペースがあった",
+      "今日一日をなんとか過ごした",
+      "誰かと短く話せた",
+      "返事を一つできた",
+      "今日も建物に入れた",
+      "エアコンが効いていた",
+      "水を飲む時間があった",
+      "今日の仕事が終わった",
+      "靴を脱げる時間が来た",
+      "帰り道が始まった",
+      "今日もここまで来られた",
+      "少しだけ肩の力が抜けた",
+      "一瞬だけ自分の時間があった",
+      "今日、仕事があった",
+      "席があった",
+      "今日もなんとかなった",
+      "一つだけできたことがあった",
+      "今日も終わりに向かっている",
+      "ここまで来られた",
+    ]
+  },
+  train: {
+    label: '🚃 電車',
+    emoji: ['🚃','🎧','🌅','🗂️','🚉'],
+    cards: [
+      "ホームに着いたらすぐ電車が来た",
+      "座れた",
+      "隣の席が空いていた",
+      "ちょうどいい場所に吊り革があった",
+      "乗り換えがスムーズだった",
+      "ドアの前にうまく立てた",
+      "車内がちょうどいい温度だった",
+      "スマホの充電が残っていた",
+      "好きな曲がタイミングよく流れた",
+      "すみに立てた",
+      "窓から空がきれいに見えた",
+      "ちょっとだけうとうとできた",
+      "荷物を楽に持てた",
+      "乗れた",
+      "目的地に向かっている",
+      "誰かの荷物が当たらなかった",
+      "電車の揺れがちょうどよかった",
+      "発車ベルがちゃんと聞こえた",
+      "降りる駅を乗り過ごさなかった",
+      "改札をすんなり通れた",
+      "ICカードの残高があった",
+      "扉の近くに立てた",
+      "窓ガラスに景色が映っていた",
+      "少しだけ目を閉じられた",
+      "ヘッドフォンをつけていられた",
+      "一駅分、ぼーっとできた",
+      "揺れに体を預けられた",
+      "車内が静かだった",
+      "誰も話しかけてこなかった",
+      "今日も電車に乗れた",
+      "電車がちゃんと来た",
+      "どこかへ向かっていた",
+      "ホームに立っていられた",
+      "電車を待てた",
+      "電車の中で一息つけた",
+      "流れていく景色を見ていた",
+      "今日も移動できた",
+      "乗ることができた",
+      "気づいたら目的地が近づいていた",
+      "ここまで来られた",
+      "少しだけ前に進めた",
+      "ホームの空気を吸えた",
+      "電灯の光が見えた",
+      "座席の感触があった",
+      "ドアが閉まる音がした",
+      "少しだけ景色を眺めていた",
+      "気づいたら時間が経っていた",
+      "着いた",
+      "降りられた",
+      "目的地に着いた",
+    ]
+  },
+  outside: {
+    label: '🌳 外・散歩',
+    emoji: ['🌳','🌤️','🍃','🌸','🐦'],
+    cards: [
+      "信号が青に変わるタイミングで渡れた",
+      "ちょうどいい風が吹いてきた",
+      "空がきれいだった",
+      "鳥の声がきこえた",
+      "日陰がちょうどあった",
+      "いい匂いがどこかからしてきた",
+      "地面の影がきれいな形だった",
+      "葉っぱが光に透けてきれいだった",
+      "木のそばを通ったら涼しかった",
+      "雲がおもしろい形をしていた",
+      "猫と目があった",
+      "気づいたら深呼吸していた",
+      "足音が心地よかった",
+      "空の青がきれいだった",
+      "外に出られた",
+      "空気が肌に当たった",
+      "地面がしっかりしていた",
+      "一歩でも進めた",
+      "外の光を浴びた",
+      "風が少しだけ顔に当たった",
+      "草が揺れていた",
+      "遠くまで見渡せた",
+      "雲が動いていた",
+      "木陰がちょうどあった",
+      "地面に自分の影があった",
+      "自分の足が動いた",
+      "少しだけ歩けた",
+      "空が広かった",
+      "外がちゃんとあった",
+      "外の景色が目に入った",
+      "鳥が飛んでいた",
+      "緑が目に入った",
+      "太陽が出ていた",
+      "今日の空気を吸えた",
+      "外に出ることができた",
+      "少しだけ遠くを見た",
+      "外に出ていた",
+      "風の音がした",
+      "葉っぱが落ちていた",
+      "足元の感触がよかった",
+      "今日も空があった",
+      "日差しがあった",
+      "風が気持ちよかった",
+      "少しだけ前を向けた",
+      "外の色がいつも通りだった",
+      "ここまで歩いてこられた",
+      "外の景色がいつも通りだった",
+      "今日も空が広かった",
+      "外に出られた、それだけで十分だった",
+      "一歩ずつ進めた",
+    ]
+  },
+  cafe: {
+    label: '☕ カフェ',
+    emoji: ['☕','🍰','📖','🌿','🎵'],
+    cards: [
+      "すぐ席が見つかった",
+      "注文がスムーズにできた",
+      "飲み物がちょうどいい温度で来た",
+      "いい音楽がかかっていた",
+      "隣がうるさくなかった",
+      "コンセントのそばに座れた",
+      "思ったより静かだった",
+      "窓際の席が空いていた",
+      "飲み物がいつもより美味しく感じた",
+      "Wi-Fiがつながった",
+      "店員さんの対応が感じよかった",
+      "ちょうどいい明るさだった",
+      "いい匂いに包まれていた",
+      "思ったより長居できた",
+      "外の景色がなんとなくよかった",
+      "カップが手にちょうどよかった",
+      "ひとりの時間があった",
+      "誰も急かさなかった",
+      "ただ座っていられた",
+      "温かい飲み物を飲めた",
+      "飲み物を一口だけ飲めた",
+      "いていい場所があった",
+      "BGMが耳に優しかった",
+      "ぼんやりしていてよかった",
+      "椅子が座り心地よかった",
+      "テーブルに肘をついてぼーっとできた",
+      "少しだけ休めた",
+      "飲み物から湯気が出ていた",
+      "誰も見ていなかった",
+      "静かに時間が流れた",
+      "ここで息ができた",
+      "今日もどこかに来られた",
+      "飲み物が手元にあった",
+      "カップの温かさが手に伝わった",
+      "少しだけほっとした",
+      "いられる場所があった",
+      "時間がゆっくり過ぎた",
+      "何も決めなくていい時間があった",
+      "下を向いていてもよかった",
+      "BGMがちょうどよかった",
+      "明かりが優しかった",
+      "カップを両手で持てた",
+      "今日はここに来られた",
+      "注文できた",
+      "ひとこと言えた",
+      "席についていられた",
+      "少しだけ体が落ち着いた",
+      "気づいたら時間が経っていた",
+      "ここにいられた",
+      "今日も飲み物を飲めた",
+    ]
+  }
+};
+
+let currentLoc = 'home';
+let lastIndex = -1;
+let isDrawing = false;
+
+function setLoc(el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  currentLoc = el.dataset.loc;
+  document.getElementById('resultCard').classList.remove('visible');
+  document.getElementById('reactions').classList.remove('visible');
+  document.getElementById('gachaEmoji').textContent = '🌤️';
+  lastIndex = -1;
+}
+
+function pickCard() {
+  const pool = CARDS[currentLoc].cards;
+  let idx;
+  do { idx = Math.floor(Math.random() * pool.length); } while (idx === lastIndex && pool.length > 1);
+  lastIndex = idx;
+  return pool[idx];
+}
+
+function draw(e) {
+  if (isDrawing) return;
+  isDrawing = true;
+
+  const btn = document.getElementById('gachaBtn');
+  const rect = btn.getBoundingClientRect();
+  const rip = document.createElement('div');
+  rip.className = 'ripple';
+  rip.style.cssText = 'width:60px;height:60px;left:' + (e.clientX-rect.left-30) + 'px;top:' + (e.clientY-rect.top-30) + 'px';
+  btn.appendChild(rip);
+  setTimeout(() => rip.remove(), 500);
+
+  const emojis = CARDS[currentLoc].emoji;
+  document.getElementById('gachaEmoji').textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+  const card = document.getElementById('resultCard');
+  const reacts = document.getElementById('reactions');
+  card.classList.remove('visible');
+  reacts.classList.remove('visible');
+  document.getElementById('btnYes').classList.remove('selected');
+  document.getElementById('btnNo').classList.remove('selected');
+
+  setTimeout(() => {
+    const text = pickCard();
+    document.getElementById('cardLocation').textContent = CARDS[currentLoc].label;
+    const cardText = document.getElementById('cardText');
+    cardText.textContent = text;
+    cardText.classList.remove('animating');
+    void cardText.offsetWidth;
+    cardText.classList.add('animating');
+    card.classList.add('visible');
+    setTimeout(() => reacts.classList.add('visible'), 300);
+    isDrawing = false;
+  }, 280);
+}
+
+function react(type) {
+  if (type === 'yes') {
+    document.getElementById('gachaEmoji').textContent = '✨';
+    addToLog();
+  }
+  const btn = document.getElementById(type === 'yes' ? 'btnYes' : 'btnNo');
+  btn.classList.add('selected');
+  setTimeout(() => drawNext(), 420);
+}
+
+function drawNext() {
+  if (isDrawing) return;
+  isDrawing = true;
+
+  const card = document.getElementById('resultCard');
+  const reacts = document.getElementById('reactions');
+
+  card.style.transition = 'opacity 0.2s ease, transform 0.2s ease';
+  card.style.opacity = '0';
+  card.style.transform = 'translateY(-8px) scale(0.98)';
+  reacts.style.opacity = '0';
+
+  setTimeout(() => {
+    document.getElementById('btnYes').classList.remove('selected');
+    document.getElementById('btnNo').classList.remove('selected');
+    card.style.transition = '';
+    card.style.opacity = '';
+    card.style.transform = '';
+
+    const emojis = CARDS[currentLoc].emoji;
+    document.getElementById('gachaEmoji').textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+    const text = pickCard();
+    document.getElementById('cardLocation').textContent = CARDS[currentLoc].label;
+    const cardText = document.getElementById('cardText');
+    cardText.textContent = text;
+    cardText.classList.remove('animating');
+    void cardText.offsetWidth;
+    cardText.classList.add('animating');
+
+    card.classList.add('visible');
+    reacts.style.opacity = '';
+    setTimeout(() => reacts.classList.add('visible'), 250);
+    isDrawing = false;
+  }, 220);
+}
+
+const logItems = []; // {emoji, text}
+
+function addToLog() {
+  const text = document.getElementById('cardText').textContent;
+  const loc = CARDS[currentLoc];
+  logItems.unshift({ emoji: loc.emoji[0], text });
+
+  const li = document.createElement('li');
+  li.className = 'log-item';
+  li.innerHTML = '<span class="log-loc">' + loc.emoji[0] + '</span><span class="log-text">' + text + '</span>';
+
+  const list = document.getElementById('logList');
+  list.insertBefore(li, list.firstChild);
+
+  document.getElementById('logSection').classList.add('visible');
+  updateShareText();
+  document.getElementById('shareSection').classList.add('visible');
+}
+
+function updateShareText() {
+  const now = new Date();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  const lines = logItems.map(item => '✓ ' + item.text);
+  const text = m + '/' + d + ' あったこと\n' + lines.join('\n') + '\n\n#あったね\nhttps://seu-yu.github.io/attane/';
+  document.getElementById('shareText').value = text;
+  const len = text.length;
+  const counter = document.getElementById('charCount');
+  counter.textContent = len + ' / 140';
+  counter.classList.toggle('over', len > 140);
+}
+
+function copyShare() {
+  const ta = document.getElementById('shareText');
+  navigator.clipboard.writeText(ta.value).then(() => {
+    const btn = document.getElementById('copyBtn');
+    btn.textContent = 'コピーしました ✓';
+    btn.classList.add('copied');
+    setTimeout(() => {
+      btn.textContent = 'コピーする';
+      btn.classList.remove('copied');
+    }, 2000);
+  });
+}
+
+function clearLog() {
+  document.getElementById('logList').innerHTML = '';
+  logItems.length = 0;
+  document.getElementById('logSection').classList.remove('visible');
+  document.getElementById('shareSection').classList.remove('visible');
+}
+</script>
+</body>
+</html>
