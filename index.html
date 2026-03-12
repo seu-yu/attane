@@ -721,7 +721,7 @@ function updateShareText() {
   const now = new Date();
   const m = now.getMonth() + 1;
   const d = now.getDate();
-  const lines = logItems.map(item => '✓ ' + item.text);
+  const lines = logItems.map(item => item.emoji + ' ' + item.text);
   const text = m + '/' + d + ' あったこと\n' + lines.join('\n') + '\n\n#あったね\nhttps://seu-yu.github.io/attane/';
   document.getElementById('shareText').value = text;
   const len = text.length;
